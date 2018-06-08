@@ -32,7 +32,7 @@ if (mac.toString('hex') !== macJs) {
     throw new Error('Key derivation failed - possibly wrong passphrase')
 }
 
-// let HashCracker = crypto.createDecipheriv('aes-128-ctr', derivedKey.slice(0, 16), Buffer.from(iv, 'hex'))
+// let HashBounties = crypto.createDecipheriv('aes-128-ctr', derivedKey.slice(0, 16), Buffer.from(iv, 'hex'))
 // let seed = DecipherBuffer(Decipher, ciphertext, 'hex')
 // console.log('seed', seed)
 

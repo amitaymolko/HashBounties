@@ -12,7 +12,7 @@ const ORACLE_FROM_ADDRESS = process.env.ORACLE_FROM_ADDRESS
 const ORACLE_PRIVATE_KEY = process.env.ORACLE_PRIVATE_KEY
 console.log('NETWORK', NETWORK)
 
-const HashCrackerContract = require('../build/contracts/HashCracker.json')
+const HashBountiesContract = require('../build/contracts/HashBounties.json')
 
 const Web3 = require('web3')
 let web3 
@@ -24,13 +24,13 @@ if (NETWORK == 'development') {
 
 const BN = web3.utils.BN
 
-const hashCrackerContract = contract(HashCrackerContract)
-hashCrackerContract.setProvider(web3.currentProvider)
+const hashBountyerContract = contract(HashBountiesContract)
+hashBountyerContract.setProvider(web3.currentProvider)
 
-if (typeof hashCrackerContract.currentProvider.sendAsync !== "function") {
-    hashCrackerContract.currentProvider.sendAsync = function () {
-        return hashCrackerContract.currentProvider.send.apply(
-            hashCrackerContract.currentProvider, arguments
+if (typeof hashBountyerContract.currentProvider.sendAsync !== "function") {
+    hashBountyerContract.currentProvider.sendAsync = function () {
+        return hashBountyerContract.currentProvider.send.apply(
+            hashBountyerContract.currentProvider, arguments
         );
     };
 }
@@ -66,30 +66,30 @@ web3.eth.getAccounts().then(accounts => {
     web3.eth.defaultAccount = oracle;
 
     const run = async () => {
-        const deployedHashCrackerContract = await hashCrackerContract.deployed()
+        const deployedHashBountiesContract = await hashBountyerContract.deployed()
         
-        var event = deployedHashCrackerContract.RequestHashCheck();
+        var event = deployedHashBountiesContract.RequestHashCheck();
         event.watch(async (err, result) => {
             if (err) {
                 console.log('err', err);
                 return;
             } else {
-                const hashCrackIndex = result.args.hashCrackIndex.toNumber();
+                const hashBountyIndex = result.args.hashBountyIndex.toNumber();
                 const crackerAddress = result.args.crackerAddress;
                 const crackerPassword = result.args.crackerPassword;
-                const hashCrack = await deployedHashCrackerContract.hashCracks(hashCrackIndex);
-                if (!hashCrack[6]) {
-                    const hash = hashCrack[2]
-                    const hashType = hashCrack[3]
+                const hashBounty = await deployedHashBountiesContract.hashBountys(hashBountyIndex);
+                if (!hashBounty[6]) {
+                    const hash = hashBounty[2]
+                    const hashType = hashBounty[3]
                     if (hashType == 'scrypt') {
-                        const scryptParams = await deployedHashCrackerContract.getScrypt(hash);
+                        const scryptParams = await deployedHashBountiesContract.getScrypt(hash);
                         const valid = validScrypt(scryptParams, crackerPassword)
                         console.log('valid', valid)
 
                         if (valid) {
-                            await deployedHashCrackerContract.submitValidCrack(hashCrackIndex, crackerAddress, crackerPassword, { from: oracle, gas: 470000 })
-                            const hashCrack2 = await deployedHashCrackerContract.hashCracks(hashCrackIndex);
-                            console.log('hashCrack2', hashCrack2)
+                            await deployedHashBountiesContract.submitValidCrack(hashBountyIndex, crackerAddress, crackerPassword, { from: oracle, gas: 470000 })
+                            const hashBounty2 = await deployedHashBountiesContract.hashBountys(hashBountyIndex);
+                            console.log('hashBounty2', hashBounty2)
                         }                         
                     }
                 }

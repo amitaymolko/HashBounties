@@ -74,7 +74,7 @@ contract Scrypt {
         return uint16(out);
     }
 
-    function requestScryptHashCrack(bytes32 _hash, bytes _input)
+    function requestScryptHashBounty(bytes32 _hash, bytes _input)
     hashMatches(_hash, _input)
     // payable
     public 

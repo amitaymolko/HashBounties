@@ -13,12 +13,12 @@ def load_contract(url):
     return r.json()
 
 
-contract_details = load_contract('https://hashbounty.com/HashCracker.json')
+contract_details = load_contract('https://hashbounty.com/HashBounties.json')
 contract_abi = contract_details.get('abi')
 contract_address = Web3.toChecksumAddress(contract_details.get('networks').get('3').get('address'))
 web3 = Web3(HTTPProvider("https://ropsten.infura.io/"))
 contract = web3.eth.contract(address=contract_address, abi=contract_abi)
-hash_count = contract.call().getHashCracksLength()
+hash_count = contract.call().getHashBountysLength()
 already_cracked = set()
 
 
@@ -40,7 +40,7 @@ while True:
     time.sleep(3)
     print("Looping...")
     for i in range(int(hash_count)):
-        single_hash = contract.call().hashCracks(i)
+        single_hash = contract.call().hashBountys(i)
         requester, bounty, hash_bytes, hash_type, cracker, password, cancelled, redeemed = single_hash
 
         if password and hash_type == 'scrypt':

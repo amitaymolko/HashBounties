@@ -15,7 +15,7 @@ contract('Scrypt', (accounts) => {
   // it('fails to submit hashcrack with invalid amoun', async () => {
   //   try {
   //     const value = web3.toWei(0.0001, 'ether')
-  //     const tx = await Contract.requestHashCrack(0x19513FDC9DA4FB72A4A05EB66917548D3C90FF94D5419E1F2363EEA89DFEE1DD, "sha256", { value })
+  //     const tx = await Contract.requestHashBounty(0x19513FDC9DA4FB72A4A05EB66917548D3C90FF94D5419E1F2363EEA89DFEE1DD, "sha256", { value })
   //     console.log('tx', tx)
   //     throw new Error('unauthorized tx')
   //   } catch (err) {
@@ -30,7 +30,7 @@ contract('Scrypt', (accounts) => {
     const hash = web3.sha3(inputBytes, { encoding: "hex" })
     console.log(hash);
     
-    await Contract.requestScryptHashCrack(hash, inputBytes) 
+    await Contract.requestScryptHashBounty(hash, inputBytes) 
     const scryptHashParam = await Contract.getScrypt(hash)
     
     assert.isTrue(scryptHashParam[0] == "0x19af5e7a09875927cdec8900a5b4ce1e428b6746836586ea6838d1cf5a027115")

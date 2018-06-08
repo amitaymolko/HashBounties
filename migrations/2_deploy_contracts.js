@@ -1,5 +1,5 @@
 
-var HashCracker = artifacts.require("./HashCracker.sol");
+var HashBounties = artifacts.require("./HashBounties.sol");
 
 require('dotenv').config({ path: '../.env' })
 
@@ -14,5 +14,5 @@ module.exports = async (deployer, network, accounts) => {
     oracle = ORACLE_FROM_ADDRESS
   }
   
-  deployer.deploy(HashCracker, oracle)
+  deployer.deploy(HashBounties, oracle)
 };

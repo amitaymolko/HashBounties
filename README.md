@@ -1,5 +1,5 @@
-# HashCracker
-HashCracker - Proof of Time-Travel on the blockchain
+# HashBounties
+HashBounties - Bounties for hash cracking
 
 ## Develop
 Download and run [Ganache](http://truffleframework.com/ganache/)  

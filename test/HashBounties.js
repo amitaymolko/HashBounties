@@ -1,6 +1,6 @@
-const HashCracker = artifacts.require('HashCracker')
+const HashBounties = artifacts.require('HashBounties')
 
-contract('HashCracker', (accounts) => {
+contract('HashBounties', (accounts) => {
   
   var account = accounts[0]
   var account2 = accounts[1]
@@ -10,15 +10,15 @@ contract('HashCracker', (accounts) => {
   const inputBytes = "0x19af5e7a09875927cdec8900a5b4ce1e428b6746836586ea6838d1cf5a0271152052d7e775c9b3a5d8ebf40e2be3be234707816a758b6eec1ba28c54a4b6cf63de200008010994fb7a49c0f5f4b2c365e168f27701366acb3c326c11366b027eb96119140b"
 
   it('deploy and grab', async () => {
-    // Contract = await HashCracker.new()
-    Contract = await HashCracker.deployed()
+    // Contract = await HashBounties.new()
+    Contract = await HashBounties.deployed()
     // console.log('Contract', Contract.address)
   })
 
   it('fails to submit hashcrack with invalid hashtype', async () => {
     try {
       const value = web3.toWei(0.1, 'ether')
-      const tx = await Contract.requestHashCrack(0x19513FDC9DA4FB72A4A05EB66917548D3C90FF94D5419E1F2363EEA89DFEE1DD, "invalid_hash_type", "", { value })
+      const tx = await Contract.requestHashBounty(0x19513FDC9DA4FB72A4A05EB66917548D3C90FF94D5419E1F2363EEA89DFEE1DD, "invalid_hash_type", "", { value })
       console.log('tx', tx)
       throw new Error('unauthorized tx')
     } catch (err) {
@@ -32,7 +32,7 @@ contract('HashCracker', (accounts) => {
   it('fails to submit hashcrack with invalid amount', async () => {
     try {
       const value = web3.toWei(0.0001, 'ether')
-      const tx = await Contract.requestHashCrack(0x19513FDC9DA4FB72A4A05EB66917548D3C90FF94D5419E1F2363EEA89DFEE1DD, "sha256", "", { value })
+      const tx = await Contract.requestHashBounty(0x19513FDC9DA4FB72A4A05EB66917548D3C90FF94D5419E1F2363EEA89DFEE1DD, "sha256", "", { value })
       console.log('tx', tx)
       throw new Error('unauthorized tx')
     } catch (err) {
@@ -60,7 +60,7 @@ contract('HashCracker', (accounts) => {
       event.stopWatching()
       done()
     })
-    Contract.requestHashCrack("0x19513FDC9DA4FB72A4A05EB66917548D3C90FF94D5419E1F2363EEA89DFEE1DD", "sha256", "", { value }) //Password1
+    Contract.requestHashBounty("0x19513FDC9DA4FB72A4A05EB66917548D3C90FF94D5419E1F2363EEA89DFEE1DD", "sha256", "", { value }) //Password1
   })
 
   it('fails to submit crack with wrong password', async () => {
@@ -79,7 +79,7 @@ contract('HashCracker', (accounts) => {
 
   it('fails to cancel crack with wrong account', async () => {
     try {
-      const tx = await Contract.cancelHashCrack(0, {from: account2})
+      const tx = await Contract.cancelHashBounty(0, {from: account2})
       console.log('tx', tx)
       throw new Error('unauthorized tx')
     } catch (err) {
@@ -108,16 +108,16 @@ contract('HashCracker', (accounts) => {
   })
 
   it('redeem reward', async () => {
-    const initialHashCrack = (await Contract.hashCracks(0))
-    assert.isFalse(initialHashCrack[7])
+    const initialHashBounty = (await Contract.hashBountys(0))
+    assert.isFalse(initialHashBounty[7])
     await Contract.redeemRewardUnsafe(0, { from: account2 })
-    const finalHashCrack = (await Contract.hashCracks(0))
-    assert.isTrue(finalHashCrack[7])
+    const finalHashBounty = (await Contract.hashBountys(0))
+    assert.isTrue(finalHashBounty[7])
   })
 
   // it('fails to redeem redeemed hash', async () => {
-  //   const initialHashCrack = (await Contract.hashCracks(0))
-  //   assert.isTrue(initialHashCrack[7])
+  //   const initialHashBounty = (await Contract.hashBountys(0))
+  //   assert.isTrue(initialHashBounty[7])
   //   try {
   //     const tx = await Contract.redeemCrackAttemptUnsafe(0, { from: account2 })
   //     console.log('tx', tx)
@@ -131,10 +131,10 @@ contract('HashCracker', (accounts) => {
   // })
 
   it('fails to submit crack on already cracked hash', async () => {
-    const length = (await Contract.getHashCracksLength()).toNumber()
-    const hashCrack = (await Contract.hashCracks(0))
+    const length = (await Contract.getHashBountysLength()).toNumber()
+    const hashBounty = (await Contract.hashBountys(0))
     // console.log('length', length)
-    // console.log('hashCrack', hashCrack)
+    // console.log('hashBounty', hashBounty)
 
     try {
       const value = web3.toWei(0.1, 'ether')
@@ -151,17 +151,17 @@ contract('HashCracker', (accounts) => {
 
   it('submits and cancels crack with password', async() => { 
     const value = web3.toWei(0.1, 'ether')
-    await Contract.requestHashCrack("0x19513FDC9DA4FB72A4A05EB66917548D3C90FF94D5419E1F2363EEA89DFEE1DD", "sha256", "", { value }) //Password1
-    await Contract.cancelHashCrack(1)
-    const hashCrack = (await Contract.hashCracks(1))    
-    assert.isTrue(hashCrack[6])
+    await Contract.requestHashBounty("0x19513FDC9DA4FB72A4A05EB66917548D3C90FF94D5419E1F2363EEA89DFEE1DD", "sha256", "", { value }) //Password1
+    await Contract.cancelHashBounty(1)
+    const hashBounty = (await Contract.hashBountys(1))    
+    assert.isTrue(hashBounty[6])
   })
 
   it('submits scrypt hash', async () => {
     const value = web3.toWei(0.1, 'ether')
     const hash = web3.sha3(inputBytes, { encoding: "hex" })
-    await Contract.requestHashCrack(hash, "scrypt", inputBytes, { value })
-    // const hashCrack = (await Contract.hashCracks(1))
+    await Contract.requestHashBounty(hash, "scrypt", inputBytes, { value })
+    // const hashBounty = (await Contract.hashBountys(1))
     const scryptHashParam = await Contract.getScrypt(hash)
 
     assert.isTrue(scryptHashParam[0] == "0x19af5e7a09875927cdec8900a5b4ce1e428b6746836586ea6838d1cf5a027115")
@@ -175,13 +175,13 @@ contract('HashCracker', (accounts) => {
 
   it('submits scrypt hash', async () => {
     const value = web3.toWei(0.1, 'ether')
-    const length = (await Contract.getHashCracksLength()).toNumber()
+    const length = (await Contract.getHashBountysLength()).toNumber()
     await Contract.submitCrack(length - 1, "1234567890", { value, from: account2 })
   })
 
   it('fails to submit crack on already requested password', async () => {
     const value = web3.toWei(0.1, 'ether')
-    const length = (await Contract.getHashCracksLength()).toNumber()
+    const length = (await Contract.getHashBountysLength()).toNumber()
 
     try {
       const tx = await Contract.submitCrack(length - 1, "1234567890", { value, from: oracle })
@@ -197,11 +197,11 @@ contract('HashCracker', (accounts) => {
   
 
   // it('redeems crack', async () => {
-  //   const initialHashCrack = (await Contract.hashCracks(2))
-  //   console.log('initialHashCrack', initialHashCrack)
+  //   const initialHashBounty = (await Contract.hashBountys(2))
+  //   console.log('initialHashBounty', initialHashBounty)
     
   //   await Contract.redeemCrackAttemptUnsafe(2, {from: account2})
-  //   const hashCrack = (await Contract.hashCracks(2))
-  //   assert.isTrue(hashCrack[7])
+  //   const hashBounty = (await Contract.hashBountys(2))
+  //   assert.isTrue(hashBounty[7])
   // })
 })

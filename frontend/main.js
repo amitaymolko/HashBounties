@@ -52,19 +52,19 @@ app.controller('hashBountiesCtrl', function ($scope, $http) {
     return ""
   }
 
-  fetch("HashCracker.json").then((e) => e.json().then(function (text) {
-    $scope.HashCrackerJson = text
-    $scope.HashCrackerAbi = web3.eth.contract($scope.HashCrackerJson.abi);
-    $scope.HashCracker = $scope.HashCrackerAbi.at($scope.HashCrackerJson['networks']['3'].address);
-    loadedHashCracker($scope)
+  fetch("HashBounties.json").then((e) => e.json().then(function (text) {
+    $scope.HashBountiesJson = text
+    $scope.HashBountiesAbi = web3.eth.contract($scope.HashBountiesJson.abi);
+    $scope.HashBounties = $scope.HashBountiesAbi.at($scope.HashBountiesJson['networks']['3'].address);
+    loadedHashBounties($scope)
   }));
 
-  function loadedHashCracker($scope) {
+  function loadedHashBounties($scope) {
     loadHashBounties($scope)
   }
 
   function loadHashBounties($scope) {
-    $scope.HashCracker.getHashCracksLength(function (err, value) {
+    $scope.HashBounties.getHashBountysLength(function (err, value) {
       if (err) {
         console.log('err', err);
       } else {
@@ -78,7 +78,7 @@ app.controller('hashBountiesCtrl', function ($scope, $http) {
   }
 
   function loadHashBounty(index, $scope) {
-    $scope.HashCracker.hashCracks(index, function (err, value) {
+    $scope.HashBounties.hashBountys(index, function (err, value) {
       if (err) {
         console.log('err', err);
       } else {
@@ -154,7 +154,7 @@ app.controller('hashBountiesCtrl', function ($scope, $http) {
     return hex;
   } 
 
-  $scope.requestHashCrack = function() {
+  $scope.requestHashBounty = function() {
     console.log('$scope', $scope)
     
     var hash = $scope.inputHash
@@ -172,20 +172,20 @@ app.controller('hashBountiesCtrl', function ($scope, $http) {
     }
 
     console.log(hash, hash_type, price, inputData);
-    $scope.HashCracker.requestHashCrack(hash, hash_type, inputData, { 'value': price * 10**18}, closeModal)
+    $scope.HashBounties.requestHashBounty(hash, hash_type, inputData, { 'value': price * 10**18}, closeModal)
   }
     
     $scope.submitCrack = function() {
         console.log($scope.selectedIndex, document.forms['submit_crack'].password.value);
-      $scope.HashCracker.submitCrack($scope.selectedIndex, document.forms['submit_crack'].password.value, { 'value': 0.01 * 10 ** 18 }, closeModal)
+      $scope.HashBounties.submitCrack($scope.selectedIndex, document.forms['submit_crack'].password.value, { 'value': 0.01 * 10 ** 18 }, closeModal)
     }
 
     $scope.claimReward = function(index) {
-      $scope.HashCracker.redeemRewardUnsafe(index, closeModal)
+      $scope.HashBounties.redeemRewardUnsafe(index, closeModal)
     }
     
     $scope.cancelHashBounty = function() {
-        $scope.HashCracker.cancelHashCrack($scope.selectedIndex, closeModal)
+        $scope.HashBounties.cancelHashBounty($scope.selectedIndex, closeModal)
     }
 });
 
